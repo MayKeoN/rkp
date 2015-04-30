@@ -19,15 +19,13 @@ int						init_card(int color, int value)
 	card = 0;
 	card += (color > 0 && color < 5) ? (1 << (15 + color)) : 0;
 	card += (value > 0 && value < 16) ? (1 << (value - 1)) : 0;
-	// card += (value == 1) ? (1 << 13) : 0;
-	// printf("card: %x\n", card);
 	return (card);
 }
 
 t_set					*init_set(int n)
 {
-	t_set				*set;
 	int					i;
+	t_set				*set;
 
 	i = 0;
 	set = (t_set *)malloc(sizeof(t_set));
@@ -38,13 +36,15 @@ t_set					*init_set(int n)
 	return (set);
 }
 
-
-t_set					*init_deck(void)
+t_set					*init_deck(t_set *deck)
 {
-	t_set				*deck;
 	int					i;
+	// t_set				*deck;
 
 	i = 0;
+	// if (deck)
+	// 	free(deck);
+	deck = (t_set *)malloc(sizeof(t_set) * 52);
 	deck = init_set(52);
 	while (i < 52)
 	{
@@ -76,8 +76,7 @@ t_display				*init_display(void)
     screen = SDL_CreateWindow("RKP",
                           SDL_WINDOWPOS_UNDEFINED,
                           SDL_WINDOWPOS_UNDEFINED,
-                          1280, 768,
-                          0);
+                          1280, 768, 0);
 	if (screen)
 	{	
 		render = SDL_CreateRenderer(screen, -1, 0);
@@ -92,10 +91,29 @@ t_display				*init_display(void)
 	}
 	display->screen = screen;
 	display->render = render;
-	// cardpos = create_card_rect(0,0);
-	// display->cardpos = cardpos;
 	return (display);
+}
 
+
+void					combinations(int v[5], int start, int k, int w[21][5], int *index)
+{
+	int					i;
+
+	if (k > 4)
+	{	
+		i = -1;
+		while (++i < 5)
+			w[(*index)][i] = v[i];
+		*index += 1;
+		return;
+	}
+	i = start;
+	while (i < 7)
+	{
+		v[k] = i;
+		combinations(v, i+1, k+1, w, index);
+		i++;
+	}
 }
 
 void					init_combo(t_game *g)
@@ -108,46 +126,30 @@ void					init_combo(t_game *g)
 
 	index = 0;
 	combinations(v, 0, 0, w, &index);
-	i = 0;
-	j = 0;
-	for (j=0; j < 21; j++)
+	i = -1;
+	j = -1;
+	while (++j < 21)
 	{
-		for (i=0; i < 5; i++)
-		{
-			// printf ("%d ", w[j][i]);
+		while (++i < 5)
 			g->w[j][i] = w[j][i];
-		}
-		// printf("ARF\n");
-		i = 0;
+		i = -1;
 	}
 }
 
-void					combinations(int v[5], int start, int k, int w[21][5], int *index)
+t_game					*init_regame(t_game *game)
 {
-	int     			i;
+	int					i;
 
-	if (k > 4)
-	{	
-		for (i=0; i < 5; i++)
-		{
-			// printf ("%d ", v[i]);
-			w[(*index)][i] = v[i];
-		}
-		*index += 1;
-		// printf("\n");
-		return;
-	}
-
-	i = start;
-	while (i < 7)
+	i = 0;
+	game->deck = init_deck(game->deck);
+	while (i < game->npl)
 	{
-		v[k] = i;
-		combinations(v, i+1, k+1, w, index);
+		game->pl[i] = init_player(i);
 		i++;
 	}
+	shuffle_deck(game->deck);
+	return (game);
 }
-
-
 
 t_game					*init_game(int n)
 {
@@ -156,7 +158,7 @@ t_game					*init_game(int n)
 
 	i = 0;
 	game = (t_game *)malloc(sizeof(t_game));
-	game->deck = init_deck();
+	// game->deck = init_deck();
 	game->pl = (t_player **)malloc(sizeof(t_player *) * n);
 	while (i < n)
 	{
@@ -164,9 +166,14 @@ t_game					*init_game(int n)
 		i++;
 	}
 	game->npl = n;
+	i = 0;
+	while (i < 10)
+		game->stat[i++] = 0;
+	// game->stat = (int *)malloc(sizeof(int) * 10);
+	// for (int i=0; i < 10; i++)
+	// 	game->stat[i] = 0;
 	init_combo(game);
-	// game->display = init_display();
-	
+	// game->w = (int **)malloc(sizeof(int) * 105);
 	return (game);
 }
 

@@ -84,15 +84,15 @@ void					render_card(t_game *g, SDL_Rect renderRect, int value, int color)
 	// SDL_RenderClear(g->display->render);
 }
 
-int					loop_game(t_game *g, t_display *d)
+int					loop_game(t_game *g)
 {
 	// int 			*v;
 	// int				**w;
 	// int				i;
 
-	g = init_game(8);
-	g->display = d;
-	shuffle_deck(g->deck);
+	g = init_regame(g);
+	// g->display = d;
+	// shuffle_deck(g->deck);
 	serve_card(g);
 	// g->display->screen = screen;
 	// g->display->render = render;
@@ -115,7 +115,7 @@ int					loop_game(t_game *g, t_display *d)
 	// for (i=0; i < 5; i++) printf ("%d ", v[0][i]);
 	display_players(g);
     // input_loop();
-    SDL_Delay(1);
+    // SDL_Delay(10);
     // SDL_DestroyWindow(g->display->screen);
     // SDL_DestroyRenderer(g->display->render);
     // SDL_Quit();
@@ -160,19 +160,9 @@ int 					main(int ac, char **av)
 {
 	int 				i;
 	int 				j;
-	// int 				v[5];
-	// int					w[21][5];
-	// int					i;
 
-	i = 0;
-    // SDL_Window 			*screen;
-    // SDL_Renderer 		*render;
    	t_game				*g;
    	t_display			*d;
-    // SDL_Surface			*card;
-    // SDL_Texture			*texture;
-    // SDL_Rect			renderRect;
-    // SDL_Rect			textureRect;
 
     if(SDL_Init(SDL_INIT_VIDEO) == -1 )
     {
@@ -182,44 +172,29 @@ int 					main(int ac, char **av)
     TTF_Init();
     atexit(SDL_Quit);
 
- //    screen = SDL_CreateWindow("RKP",
- //                          SDL_WINDOWPOS_UNDEFINED,
- //                          SDL_WINDOWPOS_UNDEFINED,
- //                          1024, 768,
- //                          SDL_WINDOW_OPENGL);
-
- //    if(!screen)
- //    {
- //        printf( "Can't set video mode: %s\n", SDL_GetError( ) );
- //        return (1);
- //    }
-
- //    render = SDL_CreateRenderer(screen, -1, 0);
-
- //    SDL_SetRenderDrawColor(render, 0x35, 0x5e, 0x3b, 255);
-	// SDL_RenderClear(render);
-	// SDL_RenderPresent(render);
-    g = init_game(8);
+    g = init_game(2);
     d = init_display();
-    // w = malloc(sizeof(int *));
-    // int index;
-    // index = 0;
-   	// combinations(v, 0, 0, w, &index);
-	// for (j=0; j < 21; j++)
-	// {
-	// 	for (i=0; i < 5; i++)
-	// 	{
-	// 		printf ("%d ", w[j][i]);
-	// 	}
-	// 	printf("ARF\n");
-	// 	i = 0;
-	// }   	
+    g->display = d;
+
 
 	i = 0;
    	SDL_Delay(100);
-    while(loop_game(g, d))
+    while(loop_game(g) && i < 2392)
+    {
     	printf("Game #%d\n", i++);
-
+    }
+    printf(">>>>>>>>>>>>RESULTS<<<<<<<<<<<<\n");
+    printf("HIGH	: %d\n", g->stat[0]);
+    printf("PAIR	: %d\n", g->stat[1]);
+    printf("DOUBLE	: %d\n", g->stat[2]);
+    printf("THREE	: %d\n", g->stat[3]);
+    printf("STR8	: %d\n", g->stat[4]);
+    printf("FLUSH	: %d\n", g->stat[5]);
+    printf("FULL	: %d\n", g->stat[6]);
+    printf("FOUR	: %d\n", g->stat[7]);
+    printf("ROYAL--	: %d\n", g->stat[8]);
+    printf("ROYAL	: %d\n", g->stat[9]);
+    printf(">>>>>>>>>>>>STLUSER<<<<<<<<<<<<\n");
     return (0);
 }
 /*

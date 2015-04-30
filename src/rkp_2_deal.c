@@ -37,23 +37,15 @@ t_set				*shuffle_deck(t_set *deck)
 t_game				*serve_card(t_game *g)
 {
 	int				i;
-	int				al;
 	int				count;
-
 
 	i = 0;
 	count = 0;
-	srand(time(NULL));
-	al = rand() % 52;
 	while (i < g->npl)
 	{
-		// while (g->deck->s[al] == 0)
-		// 		al = rand() % 52;
 		g->pl[i]->hand->s[0] = g->deck->s[count];
 		g->deck->s[count] = init_card(0,0);
 		count++;
-		// while (g->deck->s[al] == 0)
-		// 		al = rand() % 52;
 		g->pl[i]->hand->s[1] = g->deck->s[count];
 		g->deck->s[count] = init_card(0,0);
 		count++;
@@ -71,6 +63,7 @@ t_game				*serve_round(t_game *g, int itr, int idx)
 	i = 0;
 	j = 0;
 	d = 0;
+	g->deck->s[0] = init_card(0,0);
 	while (j < itr)
 	{
 		while (g->deck->s[d + 1 + j] == 0)

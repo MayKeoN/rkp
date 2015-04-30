@@ -29,14 +29,36 @@ void					display_card_img(t_game *g, int card)
 	}
 	if (card)
 	{
-		// printf("E L E V E N\n");
-		// printf("rectX: %d\trectY: %d\tCard: %x\n", g->display->cardpos.x, g->display->cardpos.y, card);
 		render_card(g, g->display->cardpos, value, color);
-		// SDL_RenderPresent(g->display->render);
-		// SDL_RenderClear(g->display->render);
-		display_card(card);
-		// printf("\n");
+		// display_card(card);
 	}
+}
+
+void					display_win(int npl, int note)
+{
+	int					grade;
+
+	grade = note >> 20;
+	printf("==========================\n");
+	printf("Note: %o\n", note);
+	if ((grade | 4) == 1)
+		printf("DOUBLE!\n");
+	else if (grade & 6)
+		printf("TOAK!\n");
+	else if (grade & 8)
+		printf("STRAIGHT!\n");
+	else if (grade & 16)
+		printf("FLUSH!\n");
+	else if (grade & 32)
+		printf("FULL HOUSE!\n");
+	else if (grade & 64)
+		printf("SQUARED!\n");
+	printf("Player %s WINS!\n", ft_itoa(++npl));
+	printf("==========================\n");
+	if (grade & 256)
+		printf("ROYAL FLUSHHHHH!\n");
+	printf(">>>>>>>>>>>>>>>>WIN GOES TO PLAYER %d <<<<<<<<<<<<<<<<<<<<\n", npl);
+	SDL_Delay(8);
 }
 
 ////////CONVERT TO PRINT////////////////
@@ -47,7 +69,6 @@ void					display_card(int card)
 
 	i = 0;
 	cards = "123456789TJQKA--HDCS";
-	// printf("card: %x\n", card);
 	printf("\\");
 	while (i < 20)
 	{
@@ -58,7 +79,6 @@ void					display_card(int card)
 	if (!card)
 		printf(" NULL ");
 	printf("/ \t");
-	// rate_pair(g->pl[n]->hand);
 }
 
 void					display_set(t_game *g, int n)
@@ -66,10 +86,8 @@ void					display_set(t_game *g, int n)
 	int					i;
 	float				ppos[2];
 	SDL_Rect			savepos;
-	// int					x1;
-	// int					y1;
 
-	i = 0;
+	i = -1;
 	ppos[0] = (n == 2 || n == 3) ? 8 : 0;
 	ppos[1] = (!n || n == 3) ? 0 : 3;
 	if (n > 3)
@@ -77,35 +95,17 @@ void					display_set(t_game *g, int n)
 		ppos[0] = (n == 5 || n == 7 ) ? 4 : ((n == 6) ? 8 : 0);
 		ppos[1] = (n == 4 || n == 6) ? 1.5 : ((n == 5) ? 3 : 0);
 	}
-	// x1 = g->display->cardpos.x;
-	// y1 = g->display->cardpos.y;
-	while (i < g->pl[n]->hand->n)
-	{
-		// set->s[1] = 0;
+	while (++i < g->pl[n]->hand->n)
 		if (g->pl[n]->hand->s[i])
 		{
-			// printf("i: %d\tplayer#: %d\n", i, n);
-			// printf("ppos[0]: %d\tppos[1]#: %d\n", ppos[0], ppos[1]);
-
 			savepos = create_card_rect((i > 1) ? (i + 0.5) : ppos[0] + i, (i > 1) ? 1.5 : ppos[1]);
-			// printf("!@ !@ !@\n");
-			// printf("X: %dY: %dW: %dH: %d\n", savepos.x, savepos.y, savepos.w, savepos.h);
-
-
 			g->display->cardpos = savepos;
-			// g->display->cardpos.x = x1;
-			// g->display->cardpos.y = y1;
-			// printf("!!!!!!!!!!!!\n");
 			display_card_img(g, g->pl[n]->hand->s[i]);
 			if (!i)
 				display_player_text(g, n);
 			g->display->cardpos = savepos;
 			display_card_text(g, g->pl[n]->hand->s[i]);
 		}
-		i++;
-	}
-	// rate_pair(g->pl[n]->hand, n);
-	// SDL_RenderPresent(g->display->render);
 }
 
 void					display_player(t_game *g, int n)
@@ -114,7 +114,7 @@ void					display_player(t_game *g, int n)
 	// printf("Hand:\n");
 	// g->display->cardpos = create_card_rect(0, pl->n);
 	display_set(g, n);
-	printf("\n");
+	// printf("\n");
 	// printf("Nuts:\n");
 	// display_set(pl->nuts);	
 }
@@ -129,87 +129,38 @@ t_set					*shift_set(t_set *set, int start, int offset)
 		set->s[i] = set->s[i + offset];
 		i++;
 	}
-	// set->s[i]
 	return (set);
 }
 
-// t_set				*combo(t_set *hand, int c, int w[21][5])
-// {
-// 	hand->s[0] = 
-// 	return (hand);
-// }
-
-t_set					*combo_hand(t_set *hand, int w[21][5], int index)
+int					display_players(t_game *g)
 {
-	t_set				*tmp;
 	int					i;
 
 	i = 0;
-	tmp = init_set(5);
-	while (i < 5)
-	{
-		tmp->s[i] = hand->s[w[index][i]];
-		i++;
-	}
-	return (tmp);
-}
-int					rate_hands(t_game *g)
-{
-	int					i;
-	int					j;
-	// t_set				*savehand;
-	
-
-	i = 0;
-	j = 0;
-	// savehand = init_set(5);
-	while (i < g->npl)
-	{
-		// printf("CHECK\n");
-		while (j < 21)
-		{
-			// savehand = combo_hand(g->pl[i]->hand, g->w, j);
-			// set = g->pl[i]->hand;
-			if (rate_pair(combo_hand(g->pl[i]->hand, g->w, j), i)->n == 9)
-			{
-				// printf("N I N E\n");
-				g->pl[i]->hand->n = 7;
-				// printf("HAND in G: %d\n", g->pl[i]->hand->n);
-				return (1);
-			}
-			j++;
-		}
-		j = 0;
-		i++;
-	}
-	return (0);
-}
-
-
-void					display_players(t_game *g)
-{
-	int					i;
-	// t_set				*set;
-
-	i = 0;
-	// set = init_set(5);
 	if (rate_hands(g))
 	{
 		SDL_RenderClear(g->display->render);
 		while (i < g->npl)
 		{
-			printf("Player %d\n", i + 1);
+			// printf("\nPlayer %d\t", i + 1);
 			display_player(g, i);
 			i++;
+			// printf("\n");
 		}
 		SDL_RenderPresent(g->display->render);
-		SDL_Delay(5555);
-		input_loop();
+		// input_loop();
+		SDL_Delay(10);
+		// rate_scores(g, nmax);
+
 	}
-	// rate_hands(g);
+	return (0);
 }
 
-
+//////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////
 void					display_card_text(t_game *g, int card)
 {
 	int 				i;
@@ -227,14 +178,11 @@ void					display_card_text(t_game *g, int card)
 	while (i++ < 20)
 		if (card & (1 << i))
 			text[(i > 14) ? 2 : 0] = cards[i];
-	img = display_text(text, "rsrc/LiberationSans-Regular.ttf", (SDL_Color){255, 127, 255, 255}, 32, g->display->render);
+	img = display_text(text, "rsrc/fonts/LiberationSans-Regular.ttf", (SDL_Color){255, 127, 255, 255}, 32, g->display->render);
 	if (!img)
 		return;
 	SDL_QueryTexture(img, NULL, NULL, &i, &j);
-	g->display->cardpos.x += 53 - (i / 2);
-	g->display->cardpos.y += -32;//(iH / 2) + 85;
-	g->display->cardpos.w = i;
-	g->display->cardpos.h = j;	
+	g->display->cardpos = create_rect(g->display->cardpos.x + (53 - (i / 2)), g->display->cardpos.y - 32, i, j);
 	SDL_Rect textureRect = create_rect(0, 0, i, j);
 	SDL_RenderCopy(g->display->render, img, &textureRect, &g->display->cardpos);
 }
@@ -245,7 +193,7 @@ void					display_player_text(t_game *g, int n)
 	int 				iH;
 	SDL_Texture			*img;
 
-	img = display_text(ft_strjoin("Player ", ft_itoa(n + 1)), "rsrc/LiberationSans-Regular.ttf", (SDL_Color){255, 255, 0, 255}, 20, g->display->render);
+	img = display_text(ft_strjoin("Player ", ft_itoa(n + 1)), "rsrc/fonts/LiberationSans-Regular.ttf", (SDL_Color){255, 255, 0, 255}, 20, g->display->render);
 	if (img == NULL)
 		return;
 	SDL_QueryTexture(img, NULL, NULL, &iW, &iH);
@@ -281,8 +229,7 @@ Uint16					*display_unicodify(char *msg)
 	return (uni - i);
 }
 
-
-SDL_Texture* 			display_text(char *message, char *fontFile, SDL_Color color, int fontSize, SDL_Renderer *renderer)
+SDL_Texture				*display_text(char *message, char *fontFile, SDL_Color color, int fontSize, SDL_Renderer *renderer)
 {
 	Uint16				*msg;
 
@@ -307,5 +254,18 @@ SDL_Texture* 			display_text(char *message, char *fontFile, SDL_Color color, int
 	return (texture);
 }
 
+
+char 					*int2bin(int i)
+{
+	size_t 	bits = sizeof(int) * 8;
+	char 	*str = malloc(bits + 1);
+	if(!str) return NULL;
+	str[bits] = 0;
+	// type punning because signed shift is implementation-defined
+	unsigned u = *(unsigned *)&i;
+	for(; bits--; u >>= 1)
+		str[bits] = u & 1 ? '1' : '0';
+	return (str);
+}
 
 

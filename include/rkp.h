@@ -44,10 +44,12 @@ void				display_player(t_player *player);
 
 int					init_card(int color, int value);
 t_set				*init_set(int n);
-t_set				*init_deck(void);
+t_set				*init_deck(t_set *deck);
 t_player			*init_player(int n);
 t_display			*init_display(void);
 t_game				*init_game(int n);
+t_game				*init_regame(t_game *game);
+void				init_combo(t_game *g);
 
 
 //DEAL
@@ -64,11 +66,13 @@ t_game				*serve_river(t_game *g);
 
 void				display_card(int card);
 void				display_card_img(t_game *g, int card);
+void				display_card_text(t_game *g, int card);
+void				display_player_text(t_game *g, int n);
 void				display_set(t_game *g, int n);
 void				display_player(t_game *g, int n);
-void				display_players(t_game *g);
-void				display_player_text(t_game *g, int n);
-void				display_card_text(t_game *g, int card);
+int					display_players(t_game *g);
+void				display_win(int npl, int note);
+Uint16				*display_unicodify(char *msg);
 SDL_Texture			*display_text(char *message, char *fontFile, SDL_Color color, int fontSize, SDL_Renderer *renderer);
 
 
@@ -76,8 +80,13 @@ SDL_Texture			*display_text(char *message, char *fontFile, SDL_Color color, int 
 
 //RATE
 
-t_set				*rate_pair(t_set *hand, int n);
+int					rate_count(t_set *hand);
+int					rate_straight(t_set *hand);
+int					rate_flush(t_set *hand);
+int					rate_hands(t_game *g);
+int					rate_pair(t_set *hand, int n);
 void				combinations(int v[5], int start, int k, int w[21][5], int *index);
+t_set				*combo_hand(t_set *hand, int w[21][5], int index);
 
 
 //////
@@ -91,7 +100,7 @@ void					render_card(t_game *g, SDL_Rect	renderRect, int value, int color);
 int			key_input(void);
 void	    input_loop();
 
-
+char 					*int2bin(int i);
 
 
 

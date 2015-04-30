@@ -23,19 +23,28 @@
 # include "SDL_ttf.h"
 # include "libft.h"
 
-# define NO_COL			0x0000FFFF
-# define NO_VAL			0x000F0000
-# define NO_SRT			0x000FFFFF
-# define NO_RNK			0x0FF00000
 
-# define PAIR			0x00100000
-# define TUPR			0x00200000
-# define TOAK			0x00400000
+# define NO_COL			0x0000FFFE
+# define NO_VAL			0x000F0000
+# define NO_SRT			0x000FFFFE
+# define NO_RNK			0x1FF00000
+# define ON_RNK			0x1FF0FFFE
+
+# define NO_H			0x00000001
+# define NO_D			0x00000002
+# define NO_C			0x00000004
+# define NO_S			0x00000008
+
+# define HIGH			0x00100000
+# define PAIR			0x00200000
+# define TUPR			0x00400000
+# define TOAK			0x00600000
 # define STR8			0x00800000
 # define FLSH			0x01000000
 # define FULL			0x02000000
 # define FOUR			0x04000000
 # define STFL			0x08000000
+# define RYAL			0x10000000
 
 typedef struct 			s_display
 {
@@ -63,6 +72,7 @@ typedef struct 			s_game
 	t_player			**pl;
 	t_set				*deck;
 	t_display			*display;
+	int					stat[10];
 	int					w[21][5];
 }						t_game;
 
